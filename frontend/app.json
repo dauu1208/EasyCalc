@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "EasyCalc",
+    "slug": "easycalc",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "easycalc",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.easycalc"
+    },
+    "android": {
+      "package": "com.yourcompany.easycalc"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite"
+    ]
+  }
+}
