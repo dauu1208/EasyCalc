@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, StyleSheet, TextInput, View } from "react-native";
+import Text from "../components/AppText";
 import Page from "../components/Page";
 import PageHeader from "../components/PageHeader";
 import { useApp } from "../context/AppContext";
 import type { Entry, Operator } from "../types";
-import { calculate, formatNumber, runningTotal } from "../utils/calculation";
+import { calculate, formatNumber } from "../utils/calculation";
 import { colors, shadow } from "../theme";
 
 const operators: { symbol: Operator; label: string; color: string }[] = [
@@ -34,13 +35,25 @@ export default function CalculatorScreen() {
     }
     return [{ id: Date.now(), operator: null, value: 0 }];
   });
+  const [inputText, setInputText] = useState<Record<number, string>>(() => {
+    const initial: Record<number, string> = {};
+    for (const e of entries) initial[e.id] = String(e.value);
+    return initial;
+  });
   const [nextOperator, setNextOperator] = useState<Operator>("+");
 
   const total = useMemo(() => calculate(entries), [entries]);
   const unit = params.unit || "kg";
 
-  function updateValue(id: number, value: string) {
-    const numeric = Number(value);
+  function updateValue(id: number, text: string) {
+    // Only allow digits and a single decimal separator while typing.
+    const cleaned = text.replace(",", ".").replace(/[^0-9.]/g, "");
+    const parts = cleaned.split(".");
+    const normalized = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join("")}` : cleaned;
+
+    setInputText((current) => ({ ...current, [id]: normalized }));
+
+    const numeric = Number(normalized);
     setEntries((current) =>
       current.map((item) => item.id === id
         ? { ...item, value: Number.isFinite(numeric) ? numeric : 0 }
@@ -53,15 +66,22 @@ export default function CalculatorScreen() {
   }
 
   function addEntry() {
+    const id = Date.now();
     setEntries((current) => [
       ...current,
-      { id: Date.now(), operator: nextOperator, value: 0 }
+      { id, operator: nextOperator, value: 0 }
     ]);
+    setInputText((current) => ({ ...current, [id]: "0" }));
   }
 
   function removeEntry(id: number) {
     if (entries.length === 1) return;
     setEntries((current) => current.filter((item) => item.id !== id));
+    setInputText((current) => {
+      const next = { ...current };
+      delete next[id];
+      return next;
+    });
   }
 
   async function save() {
@@ -106,53 +126,53 @@ export default function CalculatorScreen() {
           <Text style={styles.headText}>Lần</Text>
           <Text style={styles.headText}>Phép</Text>
           <Text style={styles.headText}>Số lượng</Text>
-          <Text style={styles.headText}>Kết quả</Text>
-          <View />
+          <View style={{ width: 22 }} />
         </View>
 
-        {entries.map((entry, index) => {
-          const preview = runningTotal(entries, index);
-          return (
-            <View style={styles.row} key={entry.id}>
-              <Text style={styles.index}>{index + 1}</Text>
-              <View style={styles.operatorSelect}>
-                {index === 0 ? (
-                  <Text style={styles.firstOperator}>—</Text>
-                ) : (
-                  <View style={styles.operatorMiniRow}>
-                    {operators.map((op) => (
-                      <Pressable
-                        key={op.symbol}
-                        onPress={() => updateOperator(entry.id, op.symbol)}
-                        style={[
-                          styles.miniOp,
-                          { backgroundColor: entry.operator === op.symbol ? op.color : colors.surfaceMuted }
-                        ]}
-                      >
-                        <Text style={{ color: entry.operator === op.symbol ? "#fff" : colors.textSoft, fontWeight: "900" }}>
-                          {op.symbol}
-                        </Text>
-                      </Pressable>
-                    ))}
-                  </View>
-                )}
-              </View>
-              <TextInput
-                style={styles.valueInput}
-                keyboardType="decimal-pad"
-                value={String(entry.value)}
-                onChangeText={(text) => updateValue(entry.id, text)}
-                selectTextOnFocus
-              />
-              <Text style={styles.result}>{formatNumber(preview)}</Text>
-              {entries.length > 1 && (
-                <Pressable style={styles.deleteRow} onPress={() => removeEntry(entry.id)}>
-                  <Ionicons name="trash-outline" size={15} color={colors.magenta} />
-                </Pressable>
+        {entries.map((entry, index) => (
+          <View style={styles.row} key={entry.id}>
+            <Text style={styles.index}>{index + 1}</Text>
+            <View style={styles.operatorSelect}>
+              {index === 0 ? (
+                <Text style={styles.firstOperator}>—</Text>
+              ) : (
+                <View style={styles.operatorMiniRow}>
+                  {operators.map((op) => (
+                    <Pressable
+                      key={op.symbol}
+                      onPress={() => updateOperator(entry.id, op.symbol)}
+                      style={[
+                        styles.miniOp,
+                        { backgroundColor: entry.operator === op.symbol ? op.color : colors.surfaceMuted }
+                      ]}
+                    >
+                      <Text style={{ color: entry.operator === op.symbol ? "#fff" : colors.textSoft, fontWeight: "900" }}>
+                        {op.symbol}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
               )}
             </View>
-          );
-        })}
+            <TextInput
+              style={styles.valueInput}
+              keyboardType="decimal-pad"
+              value={inputText[entry.id] ?? String(entry.value)}
+              onChangeText={(text) => updateValue(entry.id, text)}
+              selectTextOnFocus
+            />
+            {entries.length > 1 && (
+              <Pressable style={styles.deleteRow} onPress={() => removeEntry(entry.id)}>
+                <Ionicons name="trash-outline" size={15} color={colors.magenta} />
+              </Pressable>
+            )}
+          </View>
+        ))}
+
+        <View style={styles.latestResultRow}>
+          <Text style={styles.latestResultLabel}>Kết quả sau lần {entries.length}</Text>
+          <Text style={styles.latestResultValue}>{formatNumber(total)}</Text>
+        </View>
       </View>
 
       <Text style={styles.sectionLabel}>Chọn phép tính cho lần tiếp theo</Text>
@@ -199,6 +219,9 @@ const styles = StyleSheet.create({
   miniOp: { width: 20, height: 20, borderRadius: 5, alignItems: "center", justifyContent: "center" },
   valueInput: { flex: 2, height: 40, borderWidth: 1, borderColor: colors.borderInput, borderRadius: 9, textAlign: "center", color: colors.text, fontSize: 14 },
   result: { flex: 1.7, textAlign: "center", color: colors.textStrong, fontSize: 12, fontWeight: "800" },
+  latestResultRow: { minHeight: 46, borderTopWidth: 1, borderTopColor: colors.border, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14, backgroundColor: colors.surfaceMuted },
+  latestResultLabel: { color: colors.textSoft, fontSize: 12, fontWeight: "800" },
+  latestResultValue: { color: colors.textStrong, fontSize: 15, fontWeight: "900" },
   deleteRow: { position: "absolute", right: 2, top: 2, width: 22, height: 22, borderRadius: 11, backgroundColor: colors.magentaSoft, alignItems: "center", justifyContent: "center" },
   sectionLabel: { marginTop: 16, marginBottom: 9, color: colors.textStrong, fontSize: 13, fontWeight: "800" },
   operatorGrid: { flexDirection: "row", gap: 7 },

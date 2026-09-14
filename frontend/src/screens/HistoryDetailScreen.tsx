@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
+import Text from "../components/AppText";
 import Page from "../components/Page";
 import PageHeader from "../components/PageHeader";
 import { useApp } from "../context/AppContext";

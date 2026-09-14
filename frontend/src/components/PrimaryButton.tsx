@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, ViewStyle } from "react-native";
+import { Pressable, StyleSheet, ViewStyle } from "react-native";
+import Text from "./AppText";
 import { colors } from "../theme";
 
 export default function PrimaryButton({

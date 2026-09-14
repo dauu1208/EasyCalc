@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, StyleSheet, TextInput, View } from "react-native";
+import Text from "../components/AppText";
 import Page from "../components/Page";
 import PageHeader from "../components/PageHeader";
 import BottomTabs from "../components/BottomTabs";

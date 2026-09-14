@@ -1,22 +1,48 @@
 {
   "expo": {
-    "name": "EasyCalc",
-    "slug": "easycalc",
+    "name": "CalcNote",
+    "slug": "calcnote",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "easycalc",
+    "scheme": "calcnote",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "icon": "./assets/icon.png",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourcompany.easycalc"
+      "bundleIdentifier": "com.nguyenngocminh.CalcNote",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
-      "package": "com.yourcompany.easycalc"
+      "package": "com.nguyenngocminh.CalcNote",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFF0F3"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "output": "static",
+      "bundler": "metro"
     },
     "plugins": [
+    [
       "expo-router",
-      "expo-sqlite"
-    ]
+      {
+        "headers": {
+          "Cross-Origin-Embedder-Policy": "credentialless",
+          "Cross-Origin-Opener-Policy": "same-origin"
+        }
+      }
+    ],
+    "expo-sqlite"  
+  ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "01480ae2-aae0-46e2-be8c-e04820ce4021"
+      }
+    }
   }
 }

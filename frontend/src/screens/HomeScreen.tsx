@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomTabs from "../components/BottomTabs";
 import { colors, shadow } from "../theme";
