@@ -9,17 +9,24 @@ import { colors, shadow } from "../theme";
 export default function HomeScreen() {
   const actions = [
     {
-      title: "Tạo mới",
-      subtitle: "Bắt đầu một bảng tính mới",
+      title: "Cân hàng",
+      subtitle: "Ghi lại nhiều lần cân và tính tổng",
       icon: "add" as const,
       color: colors.primary,
       path: "/new"
     },
     {
+      title: "Bán hàng",
+      subtitle: "Bảng giá và tính tiền theo món",
+      icon: "cart" as const,
+      color: colors.rosePink,
+      path: "/sales"
+    },
+    {
       title: "Lịch sử",
       subtitle: "Xem lại các bảng đã lưu",
       icon: "time" as const,
-      color: colors.rosePink,
+      color: colors.mauve,
       path: "/history"
     },
     {

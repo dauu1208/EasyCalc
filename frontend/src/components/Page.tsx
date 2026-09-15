@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../theme";
 
-export default function Page({ children, scroll = true }: { children: ReactNode; scroll?: boolean }) {
+export default function Page({ children, scroll = true, contentStyle }: { children: ReactNode; scroll?: boolean; contentStyle?: StyleProp<ViewStyle> }) {
   const content = (
-    <View style={styles.content}>
+    <View style={[styles.content, contentStyle]}>
       {children}
     </View>
   );
